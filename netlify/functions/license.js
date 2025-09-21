@@ -1,24 +1,30 @@
-exports.handler = async function(event, context) {
-  const expiryDate = process.env.EXPIRY_DATE || '2025-10-01';
-  const today = new Date();
-  const expiry = new Date(expiryDate);
-  let status, message;
+export async function handler(event, context) {
+  // Example expiry date
+  const expiryDate = new Date("2025-09-28T23:59:59Z");
+  const now = new Date();
 
-  if (today > expiry) {
-    status = 'expired';
-    message = 'Your license has expired. Please renew.';
-  } else {
-    status = 'active';
-    message = `Your license is valid until ${expiryDate}`;
-  }
+  const diffMs = expiryDate.getTime() - now.getTime();
+  const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+
+  let status = "valid";
+  let message = "Your license is active.";
+
+  if (daysRemaining <= 0) {
+    status = "expired";
+    message = "Your license has expired.";
+  } 
 
   return {
     statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
     body: JSON.stringify({
-      expiry: expiryDate,
       status,
-      message
-    })
+      expiryDate: expiryDate.toISOString(),
+      daysRemaining,
+      message,
+    }),
   };
-};
+}
