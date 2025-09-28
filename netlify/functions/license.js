@@ -1,6 +1,6 @@
 export async function handler(event, context) {
   // Example expiry date
-  const expiryDate = new Date("2025-09-28T23:59:59Z");
+  const expiryDate = new Date("2025-08-28T23:59:59Z");
   const now = new Date();
 
   const diffMs = expiryDate.getTime() - now.getTime();
